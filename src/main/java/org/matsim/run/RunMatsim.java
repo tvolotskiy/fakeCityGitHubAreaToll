@@ -31,9 +31,13 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.roadpricing.ControlerDefaultsWithRoadPricingModule;
 import org.matsim.roadpricing.RoadPricingConfigGroup;
+import org.matsim.roadpricing.RoadPricingModule;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
 import static java.lang.Math.random;
@@ -41,33 +45,47 @@ import static java.lang.Math.random;
 
 public class RunMatsim {
 
-	public static void main(String[] args) {
+    private static boolean createNewPopulation = false;
+
+    public static void main(String[] args) {
 		
 		Config config ;
 		if ( args.length==0 || args[0]=="" ) {
-			config = ConfigUtils.loadConfig( "scenarios/Cupchino/Config.xml",new RoadPricingConfigGroup()) ;
-			config.controler().setLastIteration(10);
+			config = ConfigUtils.loadConfig( "scenarios/Cupchino/ConfigNewRoadWithToll.xml",new RoadPricingConfigGroup()) ;
+			config.controler().setLastIteration(50);
 			config.controler().setOverwriteFileSetting( OverwriteFileSetting.deleteDirectoryIfExists );
 		} else {
 			config = ConfigUtils.loadConfig(args[0]) ;
 		}
 
-
-
 		Scenario scenario = ScenarioUtils.loadScenario(config);
+        config.controler().setOutputDirectory(config.controler().getOutputDirectory() +
+                        LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).split(":")[0]);
+
+		if (createNewPopulation){
+		    createPopulation(scenario);
+        }
 
 
 
+		Controler controler = new Controler( scenario ) ;
+        controler.setModules(new ControlerDefaultsWithRoadPricingModule());
+
+
+		controler.run();
+
+	}
+
+    private static void createPopulation(Scenario scenario) {
         PopulationFactory populationFactory = scenario.getPopulation().getFactory();
 
-        Coord hCoord1 = new Coord(-24000,0);
-        Coord hCoord2 = new Coord(12000,20790);
-        Coord hCoord3 = new Coord(12000,-20790);
+        Coord hCoord1 = new Coord(-24100,0);
+        Coord hCoord2 = new Coord(12100,20890);
+        Coord hCoord3 = new Coord(12100,-20890);
 
 
         //Coord wCoord = new Coord(-3000+Math.random()*6000,-3000+Math.random()*3000);
-
-		for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++) {
             Person person_1 = populationFactory.createPerson(Id.createPersonId("agent_from_4_" + i));
             Plan plan_1 = populationFactory.createPlan();
             Activity activity1_1 = populationFactory.createActivityFromCoord("h", hCoord1);
@@ -104,12 +122,8 @@ public class RunMatsim {
             plan_3.addActivity(activity3_2);
             person_3.addPlan(plan_3);
             scenario.getPopulation().addPerson(person_3);
-            }
+        }
+    }
 
-		Controler controler = new Controler( scenario ) ;
-
-		controler.run();
-
-	}
 
 }
