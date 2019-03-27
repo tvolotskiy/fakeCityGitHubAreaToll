@@ -20,7 +20,7 @@
 	</module>
 
 	<module name="controler">
-		<param name="outputDirectory" value="./output/CupchinoNewRoadWithToll" />
+		<param name="outputDirectory" value="./output/CupchinoNewRoadWithTollNewParamsToll_0_" />
 		<param name="firstIteration" value="0" />
 		<param name="lastIteration" value="50" />
 	</module>
@@ -37,10 +37,10 @@
 		<param name="learningRate" value="1.0" />
 		<param name="BrainExpBeta" value="2.0" />
 
-		<param name="lateArrival" value="-18" />
+		<param name="lateArrival" value="-180" />
 		<param name="earlyDeparture" value="-0" />
-		<param name="performing" value="+6" />
-		<param name="traveling" value="-6" />
+		<param name="performing" value="+600" />
+		<param name="traveling" value="-720" />
 		<param name="waiting" value="-0" />
 		
 		<param name="activityType_0"            value="h" /> <!-- home -->
@@ -66,6 +66,7 @@
 
 		<param name="ModuleProbability_2" value="0.1" />
 		<param name="Module_2" value="ReRoute" />
+		<param name="ModuleDisableAfterIteration_2" value="47" />
 	</module>
 
 </config>
